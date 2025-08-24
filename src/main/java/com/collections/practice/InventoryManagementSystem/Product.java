@@ -1,4 +1,4 @@
-package com.example.collection.InventoryManagementSystem;
+package com.collections.practice.InventoryManagementSystem;
 
 import java.util.Objects;
 

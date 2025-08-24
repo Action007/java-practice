@@ -1,4 +1,4 @@
-package com.example.collection.UserSessionTracker;
+package com.collections.practice.UserSessionTracker;
 
 class UserSession {
   private final String userId;

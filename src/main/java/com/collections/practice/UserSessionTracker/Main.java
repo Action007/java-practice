@@ -1,4 +1,4 @@
-package com.example.collection.UserSessionTracker;
+package com.collections.practice.UserSessionTracker;
 
 public class Main {
   public static void main(String[] args) {

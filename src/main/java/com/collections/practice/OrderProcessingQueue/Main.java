@@ -1,4 +1,4 @@
-package com.example.collection.OrderProcessingQueue;
+package com.collections.practice.OrderProcessingQueue;
 
 import java.util.List;
 import java.util.Map;
