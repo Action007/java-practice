@@ -1,0 +1,2 @@
+I'm testing this java code.
+This is first time im writing something to file in java.
