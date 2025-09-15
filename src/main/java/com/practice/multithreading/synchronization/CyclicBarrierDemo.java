@@ -1,4 +1,4 @@
-package com.practice.multithreading.synchronizationobjects;
+package com.practice.multithreading.synchronization;
 
 import java.util.concurrent.BrokenBarrierException;
 import java.util.concurrent.CyclicBarrier;

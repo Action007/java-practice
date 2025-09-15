@@ -1,4 +1,4 @@
-package com.practice.multithreading.synchronizationobjects;
+package com.practice.multithreading.synchronization;
 
 // Import the Phaser class — it allows threads to synchronize across multiple phases
 import java.util.concurrent.Phaser;

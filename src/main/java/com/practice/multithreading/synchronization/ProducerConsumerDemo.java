@@ -1,4 +1,4 @@
-package com.practice.multithreading.synchronizationobjects;
+package com.practice.multithreading.synchronization;
 
 // An implementation of a producer and consumer
 // that use semaphores to control synchronization.

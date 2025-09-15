@@ -1,4 +1,4 @@
-package com.practice.multithreading.synchronizationobjects;
+package com.practice.multithreading.synchronization;
 
 // Import the Exchanger class — it allows two threads to swap data
 import java.util.concurrent.Exchanger;

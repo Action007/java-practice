@@ -1,4 +1,4 @@
-package com.practice.multithreading.synchronizationobjects;
+package com.practice.multithreading.synchronization;
 
 // A simple semaphore example.
 import java.util.concurrent.*;

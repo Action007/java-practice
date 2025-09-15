@@ -1,4 +1,4 @@
-package com.practice.multithreading.lockdemo;
+package com.practice.multithreading.deadlock;
 
 import java.util.Random;
 

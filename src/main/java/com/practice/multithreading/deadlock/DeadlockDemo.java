@@ -1,4 +1,4 @@
-package com.practice.multithreading.lockdemo;
+package com.practice.multithreading.deadlock;
 
 public class DeadlockDemo {
   private static final Object fork = new Object();
