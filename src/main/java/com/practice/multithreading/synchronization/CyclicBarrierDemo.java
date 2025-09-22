@@ -1,49 +1,55 @@
 package com.practice.multithreading.synchronization;
 
+import java.util.Random;
 import java.util.concurrent.BrokenBarrierException;
 import java.util.concurrent.CyclicBarrier;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 
-class CyclicBarrierDemo {
+public class CyclicBarrierDemo {
+
+  private final CyclicBarrier barrier = new CyclicBarrier(5); // ← 5 runners must reach barrier
+  private final Random random = new Random();
+
   public static void main(String[] args) {
-    CyclicBarrier cb = new CyclicBarrier(3, new BarAction());
-    System.out.println("Starting");
-    new Thread(new MyThread(cb, "A")).start();
-    new Thread(new MyThread(cb, "B")).start();
-    new Thread(new MyThread(cb, "C")).start();
-    new Thread(new MyThread(cb, "X")).start();
-    new Thread(new MyThread(cb, "Y")).start();
-    new Thread(new MyThread(cb, "Z")).start();
-  }
-}
-
-
-// A thread of execution that uses a CyclicBarrier.
-class MyThread implements Runnable {
-  CyclicBarrier cbar;
-  String name;
-
-  MyThread(CyclicBarrier c, String n) {
-    cbar = c;
-    name = n;
+    new CyclicBarrierDemo().startRace();
   }
 
-  public void run() {
-    System.out.println(name);
-    try {
-      cbar.await();
-    } catch (BrokenBarrierException exc) {
-      System.out.println(exc);
-    } catch (InterruptedException exc) {
-      System.out.println(exc);
+  public void startRace() {
+    ExecutorService executor = Executors.newFixedThreadPool(5);
+
+    for (int i = 1; i <= 5; i++) {
+      final int runnerId = i;
+      executor.submit(() -> {
+        System.err.println("Runner " + runnerId + " is getting ready.");
+
+        try {
+          TimeUnit.SECONDS.sleep(random.nextInt(4) + 1);
+        } catch (InterruptedException e) {
+          Thread.currentThread().interrupt();
+        }
+
+        System.err.println("Runner " + runnerId + " is at start line — waiting for others...");
+
+        try {
+          barrier.await();
+        } catch (InterruptedException | BrokenBarrierException e) {
+          Thread.currentThread().interrupt();
+        }
+
+        System.err.println("🏁 Runner X started running!");
+      });
     }
-  }
-}
 
-
-// An object of this class is called when the
-// CyclicBarrier ends.
-class BarAction implements Runnable {
-  public void run() {
-    System.out.println("Barrier Reached!");
+    executor.shutdown();
+    try {
+      if (!executor.awaitTermination(10, TimeUnit.SECONDS)) {
+        executor.shutdownNow();
+      }
+    } catch (InterruptedException e) {
+      executor.shutdownNow();
+      Thread.currentThread().interrupt();
+    }
   }
 }
