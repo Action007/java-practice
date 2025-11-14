@@ -1,4 +1,4 @@
-package com.practice.solidandpatterns.behavioral.chain;
+package com.practice.solidandpatterns.behavioral.chain.filter;
 
 public class CompressionFilter implements Filter {
   private Filter nextFilter;

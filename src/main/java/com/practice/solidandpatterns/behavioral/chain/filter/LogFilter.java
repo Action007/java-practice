@@ -1,4 +1,4 @@
-package com.practice.solidandpatterns.behavioral.chain;
+package com.practice.solidandpatterns.behavioral.chain.filter;
 
 public class LogFilter implements Filter {
   private Filter nextFilter;

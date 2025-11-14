@@ -1,4 +1,4 @@
-package com.practice.solidandpatterns.behavioral.state;
+package com.practice.solidandpatterns.behavioral.state.vendingmachine;
 
 public class HasMoneyState implements VendingMachineState {
 

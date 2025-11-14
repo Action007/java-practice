@@ -1,4 +1,4 @@
-package com.practice.solidandpatterns.behavioral.state;
+package com.practice.solidandpatterns.behavioral.state.vendingmachine;
 
 public class VendingMachineOld {
   // State representation as enum for clarity (but still used in conditionals)

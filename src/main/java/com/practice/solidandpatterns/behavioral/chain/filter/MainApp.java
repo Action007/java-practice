@@ -1,4 +1,4 @@
-package com.practice.solidandpatterns.behavioral.chain;
+package com.practice.solidandpatterns.behavioral.chain.filter;
 
 public class MainApp {
   public static void main(String[] args) {

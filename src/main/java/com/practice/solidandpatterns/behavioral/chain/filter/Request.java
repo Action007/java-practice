@@ -1,4 +1,4 @@
-package com.practice.solidandpatterns.behavioral.chain;
+package com.practice.solidandpatterns.behavioral.chain.filter;
 
 import java.util.LinkedHashMap;
 import java.util.Map;

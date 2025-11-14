@@ -1,4 +1,4 @@
-package com.practice.solidandpatterns.behavioral.state;
+package com.practice.solidandpatterns.behavioral.state.vendingmachine;
 
 public class VendingMachine {
   private VendingMachineState currentState;
@@ -15,7 +15,6 @@ public class VendingMachine {
   protected void setState(VendingMachineState state) {
     this.currentState = state;
   }
-
 
   public void enableMaintenanceMode() {
     stateBeforeMaintenance = this.currentState;
