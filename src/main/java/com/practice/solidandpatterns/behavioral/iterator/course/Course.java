@@ -1,4 +1,4 @@
-package com.practice.solidandpatterns.behavioral.iterator;
+package com.practice.solidandpatterns.behavioral.iterator.course;
 
 public class Course {
   private String name;

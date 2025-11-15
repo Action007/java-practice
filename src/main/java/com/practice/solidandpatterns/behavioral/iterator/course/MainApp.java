@@ -1,4 +1,4 @@
-package com.practice.solidandpatterns.behavioral.iterator;
+package com.practice.solidandpatterns.behavioral.iterator.course;
 
 public class MainApp {
   public static void main(String[] args) {

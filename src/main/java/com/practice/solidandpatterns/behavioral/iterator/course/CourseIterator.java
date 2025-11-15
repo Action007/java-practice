@@ -1,4 +1,4 @@
-package com.practice.solidandpatterns.behavioral.iterator;
+package com.practice.solidandpatterns.behavioral.iterator.course;
 
 import java.util.List;
 import java.util.NoSuchElementException;
