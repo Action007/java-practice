@@ -124,18 +124,24 @@ public class StreamsRealWorld {
     // TODO: Calculate average grade for each student
     // Result: Map<String, Double>
     Map<String, Double> averageGrades =
-        students.stream().collect(Collectors.groupingBy((student) -> student.getName(),
-            Collectors.summingDouble((student) -> student.getGrades())));
+        students.stream().collect(Collectors.toMap(Student::getName, (student) -> student
+            .getGrades().stream().mapToInt(Integer::intValue).average().orElse(0.0)));
+    // System.out.println(averageGrades);
 
     // TODO: Get students with average grade >= 80
     // You need to filter students based on their calculated average
-    List<Student> topStudents = null;
+    List<Student> topStudents = students.stream()
+        .filter(((student) -> averageGrades.get(student.getName()) >= 80)).toList();
+    // System.out.println(topStudents);
 
     // TODO: Get all individual grades across all students (flatten)
-    List<Integer> allGrades = null;
+    List<Integer> allGrades = students.stream().flatMap((student) -> student.getGrades().stream())
+        .collect(Collectors.toList());
+    // System.out.println(allGrades);
 
     // TODO: Calculate overall class average (all grades from all students)
-    double classAverage = 0.0;
+    double classAverage = allGrades.stream().mapToInt(Integer::intValue).average().orElse(0.0);
+    // System.out.println(classAverage);
 
     // TODO: Get highest grade achieved by each major
     // Group by major, then find max grade across all students in that major
@@ -231,49 +237,52 @@ public class StreamsRealWorld {
 
     // ====== USAGE EXAMPLES (Uncomment after implementing) ======
 
-    /*
-     * System.out.println("=== SCENARIO 1: Banking ==="); System.out.println("Account balances: " +
-     * accountBalances); System.out.println("High balance accounts: " + highBalanceAccounts);
-     * 
-     * System.out.println("\n=== SCENARIO 2: Grade Analysis ===");
-     * System.out.println("Average grades: " + averageGrades); System.out.println("Top students: " +
-     * topStudents); System.out.println("All grades: " + allGrades);
-     * System.out.println("Class average: " + classAverage);
-     * System.out.println("Highest grade by major: " + highestGradeByMajor);
-     * 
-     * System.out.println("\n=== SCENARIO 3: Transaction Analysis ===");
-     * System.out.println("Total deposits: $" + totalDeposits);
-     * System.out.println("Total withdrawals: $" + totalWithdrawals);
-     * System.out.println("Largest transaction: " + largestTransaction);
-     * System.out.println("Transaction counts: " + transactionCounts);
-     * System.out.println("Active accounts: " + activeAccounts);
-     * 
-     * System.out.println("\n=== SCENARIO 4: Data Transformation ===");
-     * System.out.println("Student reports: " + studentReports);
-     * System.out.println("TX to Account map: " + txToAccount); System.out.println("Accounts list: "
-     * + accountsList);
-     * 
-     * System.out.println("\n=== SCENARIO 5: Complex Filtering & Grouping ===");
-     * System.out.println("Passing students by major: " + passingStudentsByMajor);
-     * System.out.println("ACC001 transactions: " + acc001Transactions);
-     * System.out.println("Amounts by account: " + amountsByAccount);
-     * 
-     * System.out.println("\n=== SCENARIO 6: Primitive Streams ==="); System.out.println("1-100: " +
-     * oneToHundred); System.out.println("Sum of evens: " + sumOfEvens);
-     * System.out.println("Divisible by 7: " + divisibleBy7);
-     * 
-     * System.out.println("\n=== SCENARIO 7: Optional Error Handling ===");
-     * System.out.println("Alice: " + alice); System.out.println("Alice average: " + aliceAverage);
-     * System.out.println("Zack first grade: " + zackFirstGrade);
-     * 
-     * System.out.println("\n=== SCENARIO 8: Pagination ==="); System.out.println("Page 2: " +
-     * page2);
-     * 
-     * System.out.println("\n=== SCENARIO 9: Custom Aggregation ===");
-     * System.out.println("Account summaries: " + accountSummaries);
-     * 
-     * System.out.println("\n=== SCENARIO 10: Filter Chain ===");
-     * System.out.println("Top CS students: " + topCSStudents);
-     */
+    // System.out.println("=== SCENARIO 1: Banking ===");
+    // System.out.println("Account balances: " + accountBalances);
+    // System.out.println("High balance accounts: " + highBalanceAccounts);
+    //
+    // System.out.println("\n=== SCENARIO 2: Grade Analysis ===");
+    // System.out.println("Average grades: " + averageGrades);
+    // System.out.println("Top students: " + topStudents);
+    // System.out.println("All grades: " + allGrades);
+    // System.out.println("Class average: " + classAverage);
+    // System.out.println("Highest grade by major: " + highestGradeByMajor);
+    //
+    // System.out.println("\n=== SCENARIO 3: Transaction Analysis ===");
+    // System.out.println("Total deposits: $" + totalDeposits);
+    // System.out.println("Total withdrawals: $" + totalWithdrawals);
+    // System.out.println("Largest transaction: " + largestTransaction);
+    // System.out.println("Transaction counts: " + transactionCounts);
+    // System.out.println("Active accounts: " + activeAccounts);
+    //
+    // System.out.println("\n=== SCENARIO 4: Data Transformation ===");
+    // System.out.println("Student reports: " + studentReports);
+    // System.out.println("TX to Account map: " + txToAccount);
+    // System.out.println("Accounts list: " + accountsList);
+    //
+    // System.out.println("\n=== SCENARIO 5: Complex Filtering & Grouping ===");
+    // System.out.println("Passing students by major: " + passingStudentsByMajor);
+    // System.out.println("ACC001 transactions: " + acc001Transactions);
+    // System.out.println("Amounts by account: " + amountsByAccount);
+    //
+    // System.out.println("\n=== SCENARIO 6: Primitive Streams ===");
+    // System.out.println("1-100: " + oneToHundred);
+    // System.out.println("Sum of evens: " + sumOfEvens);
+    // System.out.println("Divisible by 7: " + divisibleBy7);
+    //
+    // System.out.println("\n=== SCENARIO 7: Optional Error Handling ===");
+    // System.out.println("Alice: " + alice);
+    // System.out.println("Alice average: " + aliceAverage);
+    // System.out.println("Zack first grade: " + zackFirstGrade);
+
+    // System.out.println("\n=== SCENARIO 8: Pagination ===");
+    // System.out.println("Page 2: " + page2);
+    //
+    // System.out.println("\n=== SCENARIO 9: Custom Aggregation ===");
+    // System.out.println("Account summaries: " + accountSummaries);
+    //
+    // System.out.println("\n=== SCENARIO 10: Filter Chain ===");
+    // System.out.println("Top CS students: " + topCSStudents);
+    //
   }
 }
