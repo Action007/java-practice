@@ -3,6 +3,7 @@ package com.practice.stream;
 import java.util.*;
 import java.util.stream.Collector;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 public class StreamsRealWorld {
 
@@ -37,7 +38,7 @@ public class StreamsRealWorld {
 
     @Override
     public String toString() {
-      return String.format("Tx#%d: %s $%.2f [%s]", id, type, amount, accountId);
+      return String.format("ID: %d: %s: $%.2f, AccountID: %s", id, type, amount, accountId);
     }
   }
 
@@ -146,72 +147,126 @@ public class StreamsRealWorld {
     // TODO: Get highest grade achieved by each major
     // Group by major, then find max grade across all students in that major
     // Hint: Use flatMapToInt to get all grades per major group
-    Map<String, Optional<Integer>> highestGradeByMajor = null;
+    Map<String, Optional<Integer>> highestGradeByMajor =
+        students.stream().collect(Collectors.groupingBy(Student::getMajor, Collectors.flatMapping(
+            student -> student.getGrades().stream(), Collectors.maxBy(Comparator.naturalOrder()))));
+    // System.out.println(highestGradeByMajor);
 
     // ========== SCENARIO 3: Transaction Analysis ==========
 
     // TODO: Get total DEPOSIT amount across all accounts
-    double totalDeposits = 0.0;
+    double totalDeposits =
+        transactions.stream().filter((transaction) -> transaction.getType().equals("DEPOSIT"))
+            .mapToDouble(Transaction::getAmount).sum();
+    // System.out.println(totalDeposits);
 
     // TODO: Get total WITHDRAWAL amount across all accounts
-    double totalWithdrawals = 0.0;
+    double totalWithdrawals =
+        transactions.stream().filter((transaction) -> transaction.getType().equals("WITHDRAWAL"))
+            .mapToDouble(Transaction::getAmount).sum();
+    // System.out.println(totalWithdrawals);
 
     // TODO: Find the largest single transaction (by amount)
-    Optional<Transaction> largestTransaction = null;
+    Optional<Transaction> largestTransaction =
+        transactions.stream().max(Comparator.comparingDouble(Transaction::getAmount));
+    // System.out.println(largestTransaction);
 
     // TODO: Count transactions per account
-    Map<String, Long> transactionCounts = null;
+    Map<String, Long> transactionCounts = transactions.stream().collect(
+        Collectors.groupingBy((transaction) -> transaction.getAccountId(), Collectors.counting()));
+    // System.out.println(transactionCounts);
 
     // TODO: Get account IDs that have more than 2 transactions
-    List<String> activeAccounts = null;
+    List<String> activeAccounts = transactionCounts.entrySet().stream()
+        .filter((elem) -> elem.getValue() > 2).map(Map.Entry::getKey).toList();
+    // System.out.println(activeAccounts);
 
     // ========== SCENARIO 4: Data Transformation ==========
 
     // TODO: Create a report: "Alice (CS): avg 86.25"
     // Format: "Name (Major): avg XX.XX" for all students
-    List<String> studentReports = null;
+
+    List<String> studentReports = students.stream().map(student -> {
+      String name = student.getName();
+      String major = student.getMajor();
+      double avg = student.getGrades().stream().mapToInt(Integer::intValue).average().orElse(0.0);
+      return String.format("%s (%s): avg %.2f", name, major, avg);
+    }).toList();
+    // System.out.println(studentReports);
+
+    // This will give me: "Computer Science" -> 88.375
+    // Map<String, Double> studentReports =
+    // students.stream().collect(Collectors.groupingBy(Student::getMajor, Collectors.flatMapping(
+    // student -> student.getGrades().stream(), Collectors.averagingDouble(grade -> grade))));
 
     // TODO: Create lookup map: Transaction ID -> Account ID
-    Map<Integer, String> txToAccount = null;
+    Map<Integer, String> txToAccount = transactions.stream()
+        .collect(Collectors.toMap(Transaction::getId, Transaction::getAccountId));
+    // System.out.println(txToAccount);
 
     // TODO: Get comma-separated string of all account IDs (unique)
-    String accountsList = null;
+    String accountsList = transactions.stream().map(Transaction::getAccountId).distinct()
+        .collect(Collectors.joining(", "));
+    // System.out.println(accountsList);
 
     // ========== SCENARIO 5: Complex Filtering & Grouping ==========
 
     // TODO: Group students by major, but only include students with average >= 75
     // Result: Map<String, List<Student>>
-    Map<String, List<Student>> passingStudentsByMajor = null;
+    Map<String, List<Student>> passingStudentsByMajor = students.stream()
+        .collect(Collectors.groupingBy(Student::getMajor, Collectors.filtering((student) -> {
+          double avg =
+              student.getGrades().stream().collect(Collectors.averagingDouble(grade -> grade));
+          return avg >= 75;
+        }, Collectors.toList())));
+    // System.out.println(passingStudentsByMajor);
 
     // TODO: Get transactions for ACC001, sorted by amount descending
-    List<Transaction> acc001Transactions = null;
+    List<Transaction> acc001Transactions = transactions.stream()
+        .filter((transaction) -> transaction.getAccountId().equals("ACC001")).toList();
+    // System.out.println(acc001Transactions);
 
     // TODO: Create a map of account -> list of transaction amounts (not full objects)
     // Result: Map<String, List<Double>>
-    Map<String, List<Double>> amountsByAccount = null;
+    Map<String, List<Double>> amountsByAccount =
+        transactions.stream().collect(Collectors.groupingBy(Transaction::getAccountId,
+            Collectors.mapping(Transaction::getAmount, Collectors.toList())));
+    // System.out.println(amountsByAccount);
 
     // ========== SCENARIO 6: Primitive Streams (Performance) ==========
 
     // TODO: Generate list of numbers 1-100 using IntStream
-    List<Integer> oneToHundred = null;
+    List<Integer> oneToHundred = IntStream.rangeClosed(1, 100).boxed().toList();
+    // System.out.println(oneToHundred);
 
     // TODO: Sum of all even numbers from 1-100
-    int sumOfEvens = 0;
+    int sumOfEvens = IntStream.rangeClosed(1, 100).filter((num) -> num % 2 == 0).sum();
+    // System.out.println(sumOfEvens);
 
     // TODO: Find first 10 numbers divisible by 7 (from 1-1000)
-    List<Integer> divisibleBy7 = null;
+    List<Integer> divisibleBy7 =
+        IntStream.rangeClosed(1, 1000).filter((num) -> num % 7 == 0).limit(10).boxed().toList();
+    // System.out.println(divisibleBy7);
 
     // ========== SCENARIO 7: Error Handling with Optional ==========
 
     // TODO: Find student named "Alice" - return Optional<Student>
-    Optional<Student> alice = null;
+    Optional<Student> alice =
+        students.stream().filter((student) -> student.getName().equals("Alice")).findFirst();
+    // System.out.println(alice);
 
     // TODO: Get Alice's average grade, or 0.0 if not found
     // Hint: Use .map() and .orElse()
-    double aliceAverage = 0.0;
+    double aliceAverage = alice.map(Student::getGrades)
+        .map((grades) -> grades.stream().mapToInt(Integer::intValue).average().orElse(0.0))
+        .orElse(0.0);
+    // System.out.println(aliceAverage);
 
     // TODO: Get first grade of student "Zack" (doesn't exist), or -1 if not found
-    int zackFirstGrade = -1;
+    int zackFirstGrade = students.stream().filter((student) -> student.getName().equals("Zack"))
+        .findFirst().map(Student::getGrades).filter((grades) -> !grades.isEmpty())
+        .map((grades) -> grades.get(0)).orElse(-1);
+    // System.out.println(zackFirstGrade);
 
     // ========== SCENARIO 8: Pagination Pattern ==========
 
@@ -227,62 +282,22 @@ public class StreamsRealWorld {
     // TODO: For each account, create a summary string:
     // "ACC001: 3 transactions, balance: $600.00"
     // This combines counting and balance calculation
-    Map<String, String> accountSummaries = null;
+    Map<String, String> accountSummaries =
+        transactions.stream().collect(Collectors.groupingBy(Transaction::getAccountId)).entrySet()
+            .stream().collect(Collectors.toMap(Map.Entry::getKey, entry -> {
+              List<Transaction> txs = entry.getValue();
+              int count = txs.size();
+              double balance = txs.stream()
+                  .mapToDouble(t -> t.getType().equals("DEPOSIT") ? t.getAmount() : -t.getAmount())
+                  .sum();
+              return String.format("%d transactions, balance: $%.2f", count, balance);
+            }));
+    // System.out.println(accountSummaries);
 
     // ========== SCENARIO 10: Real-World Pattern - Filter Chain ==========
 
     // TODO: Get names of CS students with average >= 85, sorted alphabetically
     // This is a common pattern: filter -> calculate -> filter -> transform -> sort
     List<String> topCSStudents = null;
-
-    // ====== USAGE EXAMPLES (Uncomment after implementing) ======
-
-    // System.out.println("=== SCENARIO 1: Banking ===");
-    // System.out.println("Account balances: " + accountBalances);
-    // System.out.println("High balance accounts: " + highBalanceAccounts);
-    //
-    // System.out.println("\n=== SCENARIO 2: Grade Analysis ===");
-    // System.out.println("Average grades: " + averageGrades);
-    // System.out.println("Top students: " + topStudents);
-    // System.out.println("All grades: " + allGrades);
-    // System.out.println("Class average: " + classAverage);
-    // System.out.println("Highest grade by major: " + highestGradeByMajor);
-    //
-    // System.out.println("\n=== SCENARIO 3: Transaction Analysis ===");
-    // System.out.println("Total deposits: $" + totalDeposits);
-    // System.out.println("Total withdrawals: $" + totalWithdrawals);
-    // System.out.println("Largest transaction: " + largestTransaction);
-    // System.out.println("Transaction counts: " + transactionCounts);
-    // System.out.println("Active accounts: " + activeAccounts);
-    //
-    // System.out.println("\n=== SCENARIO 4: Data Transformation ===");
-    // System.out.println("Student reports: " + studentReports);
-    // System.out.println("TX to Account map: " + txToAccount);
-    // System.out.println("Accounts list: " + accountsList);
-    //
-    // System.out.println("\n=== SCENARIO 5: Complex Filtering & Grouping ===");
-    // System.out.println("Passing students by major: " + passingStudentsByMajor);
-    // System.out.println("ACC001 transactions: " + acc001Transactions);
-    // System.out.println("Amounts by account: " + amountsByAccount);
-    //
-    // System.out.println("\n=== SCENARIO 6: Primitive Streams ===");
-    // System.out.println("1-100: " + oneToHundred);
-    // System.out.println("Sum of evens: " + sumOfEvens);
-    // System.out.println("Divisible by 7: " + divisibleBy7);
-    //
-    // System.out.println("\n=== SCENARIO 7: Optional Error Handling ===");
-    // System.out.println("Alice: " + alice);
-    // System.out.println("Alice average: " + aliceAverage);
-    // System.out.println("Zack first grade: " + zackFirstGrade);
-
-    // System.out.println("\n=== SCENARIO 8: Pagination ===");
-    // System.out.println("Page 2: " + page2);
-    //
-    // System.out.println("\n=== SCENARIO 9: Custom Aggregation ===");
-    // System.out.println("Account summaries: " + accountSummaries);
-    //
-    // System.out.println("\n=== SCENARIO 10: Filter Chain ===");
-    // System.out.println("Top CS students: " + topCSStudents);
-    //
   }
 }
