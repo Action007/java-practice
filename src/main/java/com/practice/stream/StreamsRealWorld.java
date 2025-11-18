@@ -222,8 +222,9 @@ public class StreamsRealWorld {
     // System.out.println(passingStudentsByMajor);
 
     // TODO: Get transactions for ACC001, sorted by amount descending
-    List<Transaction> acc001Transactions = transactions.stream()
-        .filter((transaction) -> transaction.getAccountId().equals("ACC001")).toList();
+    List<Transaction> acc001Transactions =
+        transactions.stream().filter((transaction) -> transaction.getAccountId().equals("ACC001"))
+            .sorted(Comparator.comparingDouble(Transaction::getAmount).reversed()).toList();
     // System.out.println(acc001Transactions);
 
     // TODO: Create a map of account -> list of transaction amounts (not full objects)
@@ -275,7 +276,9 @@ public class StreamsRealWorld {
     // Hint: skip((page-1) * pageSize).limit(pageSize)
     int pageSize = 3;
     int pageNumber = 2;
-    List<Transaction> page2 = null;
+    List<Transaction> page2 =
+        transactions.stream().skip((pageNumber - 1) * pageSize).limit(pageSize).toList();
+    System.out.println(page2);
 
     // ========== SCENARIO 9: Custom Aggregation ==========
 
@@ -298,6 +301,12 @@ public class StreamsRealWorld {
 
     // TODO: Get names of CS students with average >= 85, sorted alphabetically
     // This is a common pattern: filter -> calculate -> filter -> transform -> sort
-    List<String> topCSStudents = null;
+    List<String> topCSStudents = students.stream()
+        .filter((student) -> student.getMajor().equals("Computer Science")).filter((student) -> {
+          double avg =
+              student.getGrades().stream().mapToInt(Integer::intValue).average().orElse(0.0);
+          return avg >= 85;
+        }).map(Student::getName).sorted().toList();
+    // System.out.println(topCSStudents);
   }
 }
