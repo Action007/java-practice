@@ -85,45 +85,60 @@ public class StreamsAdvanced {
 
     // ========== SECTION 1: COLLECTING_AND_THEN (8 exercises) ==========
 
-    // TODO 1.1: Get all employee names as an UNMODIFIABLE list Collections::unmodifiableList))
+    // TODO 1.1: Get all employee names as an UNMODIFIABLE list
+    // Hint: collect(Collectors.collectingAndThen(Collectors.toList(),
+    // Collections::unmodifiableList))
     List<String> employeeNames = null;
 
     // TODO 1.2: Group employees by department, then get the SIZE of the map (how many departments)
+    // Hint: collectingAndThen(groupingBy(...), Map::size)
     int departmentCount = 0;
 
     // TODO 1.3: Find the employee with max salary, then get their name (or "NONE" if empty)
+    // Hint: collectingAndThen(maxBy(...), opt -> opt.map(Employee::getName).orElse("NONE"))
     String highestPaidName = null;
 
     // TODO 1.4: Get all departments as a sorted unmodifiable list
+    // Hint: Collect to set (distinct), then collectingAndThen to convert to sorted list
     List<String> sortedDepartments = null;
 
     // TODO 1.5: Group employees by department, then count how many departments have > 2 employees
+    // Hint: groupingBy -> counting -> collectingAndThen to filter the map
     long largeDeptsCount = 0;
 
     // TODO 1.6: Calculate average salary, then format as currency string "$XX,XXX"
+    // Hint: collectingAndThen(averagingInt(...), avg -> String.format("$%,.0f", avg))
     String avgSalaryFormatted = null;
 
     // TODO 1.7: Get Engineering employees as a comma-separated string of names
+    // Hint: filter -> map to names -> collectingAndThen(joining(", "), s -> "Engineers: " + s)
     String engineersList = null;
 
     // TODO 1.8: Find min salary employee, get their full info string or "No employees"
+    // Hint: collectingAndThen(minBy(...), opt -> opt.map(Employee::toString).orElse("No
+    // employees"))
     String lowestPaidInfo = null;
 
     // ========== SECTION 2: TEEING (6 exercises) ==========
 
     // TODO 2.1: Calculate BOTH sum and count of all salaries in one pass, return as "Sum: X, Count:
     // Y"
+    // Hint: collect(Collectors.teeing(summingInt(...), counting(), (sum, count) ->
+    // String.format(...)))
     String salaryStats = null;
 
     // TODO 2.2: Find BOTH min and max salary, return as a Pair or formatted string "Min: X, Max: Y"
+    // Hint: teeing(minBy(...), maxBy(...), (min, max) -> ...)
     String salaryRange = null;
 
-    // TODO 2.3: For Sales department only: get both average salary AND list of all names return as
-    // Map with keys "average" and "names"
+    // TODO 2.3: For Sales department only: get both average salary AND list of all names
+    // Return as Map with keys "average" and "names"
+    // Hint: filter first, then teeing(averagingInt(...), mapping(..., toList()), (avg, names) ->
+    // Map.of(...))
     Map<String, Object> salesDeptStats = null;
 
-    // TODO 2.4: Calculate total sales amount AND total quantity sold (across all sales) return as
-    // formatted string "Total: $X, Units: Y"
+    // TODO 2.4: Calculate total sales amount AND total quantity sold (across all sales)
+    // Return as formatted string "Total: $X, Units: Y"
     String salesSummary = null;
 
     // TODO 2.5: Get both the product with highest total revenue AND the count of distinct products
@@ -152,7 +167,8 @@ public class StreamsAdvanced {
     String highestAvgSalaryDept = null;
 
     // TODO 3.4: For each product, calculate total revenue (amount * quantity), return top 3
-    // products by revenue
+    // products
+    // by revenue
     // Result: List of product names
     List<String> top3Products = null;
 
@@ -200,6 +216,8 @@ public class StreamsAdvanced {
 
     // TODO 5.1: Create a custom collector that collects to a TreeSet (sorted, no duplicates)
     // Use Collector.of(...) to create custom collector
+    // Hint: Collector.of(TreeSet::new, TreeSet::add, (left, right) -> { left.addAll(right); return
+    // left; })
     Set<String> sortedUniqueDepts = null;
 
     // TODO 5.2: Custom collector that concatenates employee names with " | " separator
