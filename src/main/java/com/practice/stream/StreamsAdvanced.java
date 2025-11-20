@@ -270,47 +270,99 @@ public class StreamsAdvanced {
     // TODO 3.1: Group employees by department, then for each dept get the highest salary
     // Result: Map<String, Integer>
     // Question: How do you group and then aggregate within each group?
-    Map<String, Integer> maxSalaryByDept = null;
+    // Map<String, Integer> maxSalaryByDept = employees.stream()
+    // .collect(Collectors.groupingBy(Employee::getDepartment,
+    // Collectors.collectingAndThen(
+    // Collectors.maxBy(Comparator.comparingInt(Employee::getSalary)),
+    // (opt) -> opt.map(Employee::getSalary).orElse(0))));
+
+    // Alternative(and better):
+    Map<String, Integer> maxSalaryByDept =
+        employees.stream().collect(Collectors.groupingBy(Employee::getDepartment,
+            Collectors.reducing(0, Employee::getSalary, Integer::max)));
 
     // TODO 3.2: Group sales by region, then for each region get the list of DISTINCT products sold
     // Result: Map<String, List<String>>
     // Question: How do you extract and deduplicate nested values within groups?
-    Map<String, List<String>> productsByRegion = null;
+    Map<String, List<String>> productsByRegion = sales.stream().collect(
+        Collectors.groupingBy(Sale::getRegion, Collectors.mapping(Sale::getProduct, Collectors
+            .collectingAndThen(Collectors.toCollection(LinkedHashSet::new), ArrayList::new))));
 
     // TODO 3.3: Find the department with the highest average salary
     // Steps: group by dept -> calculate avg for each -> find max entry
     // Return department name or "NONE"
     // Question: How do you find the maximum based on a calculated value (not a direct field)?
-    String highestAvgSalaryDept = null;
+    String highestAvgSalaryDept = employees.stream()
+        .collect(Collectors.groupingBy(Employee::getDepartment,
+            Collectors.averagingInt(Employee::getSalary)))
+        .entrySet().stream().max(Map.Entry.comparingByValue()).map(Map.Entry::getKey)
+        .orElse("NONE");
 
     // TODO 3.4: For each product, calculate total revenue (amount * quantity), return top 3
     // products by revenue
     // Result: List of product names
     // Question: How do you group, calculate per-group totals, sort, and limit?
-    List<String> top3Products = null;
+    List<String> top3Products = sales.stream()
+        .collect(Collectors.groupingBy(Sale::getProduct,
+            Collectors.summingDouble((sale) -> sale.getAmount() * sale.getQuantity())))
+        .entrySet().stream().sorted(Map.Entry.<String, Double>comparingByValue().reversed())
+        .limit(3).map(Map.Entry::getKey).toList();
 
     // TODO 3.5: Group employees by department, but only include employees with salary > 70k
     // Then for each dept, get list of names
     // Result: Map<String, List<String>>
     // Question: Should you filter before or after grouping? What's more efficient?
-    Map<String, List<String>> highEarnersByDept = null;
+    Map<String, List<String>> highEarnersByDept =
+        employees.stream().filter((employee) -> employee.getSalary() > 70000)
+            .collect(Collectors.groupingBy(Employee::getDepartment,
+                Collectors.mapping(Employee::getName, Collectors.toList())));
 
     // TODO 3.6: Create a report: for each department, show "Dept: X (Y employees, avg: $Z)"
     // Result: List<String>
     // Question: How do you group and then perform multiple calculations per group for formatting?
-    List<String> deptReports = null;
+    List<String> deptReports =
+        employees.stream().collect(Collectors.groupingBy(Employee::getDepartment)).entrySet()
+            .stream().map((entry) -> {
+              String dept = entry.getKey();
+              int empSize = entry.getValue().size();
+              double avgSalary =
+                  entry.getValue().stream().mapToInt(Employee::getSalary).average().orElse(0.0);
+              return String.format("Dept: %s (%d employees, avg: $%,.0f)", dept, empSize,
+                  avgSalary);
+            }).toList();
 
     // TODO 3.7: Find all employees who earn more than the average salary of their department
     // This requires: 1) Calculate avg per dept, 2) Filter employees based on their dept's avg
     // Result: List<Employee>
     // Question: How do you use one stream's results (averages) to filter another stream?
     // Challenge: This likely requires an intermediate Map of averages.
-    List<Employee> aboveAvgInDept = null;
+    Map<String, Double> avgPerDep = employees.stream().collect(Collectors
+        .groupingBy(Employee::getDepartment, Collectors.averagingInt(Employee::getSalary)));
+    List<Employee> aboveAvgInDept = employees.stream()
+        .filter((employee) -> employee.getSalary() > avgPerDep.get(employee.getDepartment()))
+        .toList();
 
     // TODO 3.8: Nested grouping: Group sales by region, then by product, then sum the amounts
-    // Result: Map<String, Map<String, Double>>
-    // Question: How do you create two levels of grouping with aggregation at the innermost level?
-    Map<String, Map<String, Double>> regionProductRevenue = null;
+    // First approach:
+    Map<String, Map<String, Double>> regionProductRevenue =
+        sales.stream().collect(Collectors.groupingBy(Sale::getRegion,
+            Collectors.groupingBy(Sale::getProduct, Collectors.summingDouble(Sale::getAmount))));
+
+    // Alternative (for very large data or reuse):
+    // Map<String, Map<String, Double>> regionProductRevenue = new HashMap<>();
+    // for (Sale sale : sales) {
+    // regionProductRevenue.computeIfAbsent(sale.getRegion(), k -> new HashMap<>())
+    // .merge(sale.getProduct(), sale.getAmount(), Double::sum);
+    // }
+
+    // Alternative 2: Use toMap with manual merging (more control):
+    // Map<String, Map<String, Double>> regionProductRevenue =
+    // sales.stream().collect(Collectors.toMap(Sale::getRegion,
+    // sale -> Map.of(sale.getProduct(), sale.getAmount()), (map1, map2) -> {
+    // Map<String, Double> merged = new HashMap<>(map1);
+    // map2.forEach((product, amount) -> merged.merge(product, amount, Double::sum));
+    // return merged;
+    // }));
 
     // ========== SECTION 4: EDGE CASES AND TRICKY SCENARIOS ==========
     // WHY: Production code must handle empty collections, nulls, and missing data gracefully.
@@ -323,22 +375,27 @@ public class StreamsAdvanced {
 
     // TODO 4.1: Calculate average salary from EMPTY list, return 0.0 if empty
     // Question: What does averagingInt return for an empty stream? How do you handle it?
-    double avgOfEmpty = 0.0;
+    double avgOfEmpty = emptyEmployees.stream().mapToInt(Employee::getSalary).average().orElse(0.0);
 
     // TODO 4.2: Group empty list by department - should return empty map
     // Question: Does groupingBy crash on empty streams? What's the return type?
-    Map<String, List<Employee>> emptyGrouping = null;
+    Map<String, List<Employee>> emptyGrouping =
+        emptyEmployees.stream().collect(Collectors.groupingBy(Employee::getDepartment));
 
     // TODO 4.3: Handle null values - some employees have null departments (add test data)
     List<Employee> employeesWithNulls = Arrays.asList(new Employee("John", null, 50000, 1),
         new Employee("Jane", "IT", 60000, 2), new Employee("Jack", null, 55000, 3));
     // Group by department, handling nulls appropriately
     // Question: Does groupingBy accept null keys? Should you filter nulls or keep them?
-    Map<String, List<Employee>> groupedHandlingNulls = null;
+    Map<String, List<Employee>> groupedHandlingNulls =
+        employeesWithNulls.stream().collect(Collectors
+            .groupingBy((emp) -> emp.getDepartment() == null ? "Unknown" : emp.getDepartment()));
 
     // TODO 4.4: Find max salary, but if list is empty return Optional.empty() not crash
     // Question: What's the proper return type for operations that might have no result?
-    Optional<Integer> maxSalaryOptional = null;
+    Optional<Integer> maxSalaryOptional =
+        employeesWithNulls.stream().map(Employee::getSalary).max(Integer::compareTo);
+
 
     // ========== SECTION 5: CUSTOM COLLECTORS ==========
     // WHY: Sometimes built-in collectors aren't enough. Maybe you need a specific data structure

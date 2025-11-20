@@ -261,7 +261,7 @@ public class OptionalMastery {
 
   // TODO 5.3: filter - Find user "alice" only if she's over 20 years old
   static Optional<User> aliceIfOver20 =
-      findUserByName("alice").filter((user) -> user.getAge() > 20);
+      findUserByName("alice").filter((user) -> user.getAge() != null && user.getAge() > 20);
 
   // TODO 5.4: Complex chaining - Get alice's zip code in uppercase, or "NO ZIP"
   // Chain: find user -> get address -> get zip -> uppercase
@@ -359,7 +359,7 @@ public class OptionalMastery {
     // Hint: map through user -> address -> zipCode -> length
     // Each step might return null, map handles it automatically
     return findUserByName(username).map(User::getAddress).map(Address::getZipCode)
-        .map(String::length).orElse(0);
+        .map(String::length).orElse(null);
     // TODO: Implement with map chain, return null if any step fails
   }
 
