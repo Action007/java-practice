@@ -409,13 +409,29 @@ public class StreamsAdvanced {
     // TODO 5.1: Create a custom collector that collects to a TreeSet (sorted, no duplicates)
     // Question: What are the three essential functions needed to collect into any container?
     // Think: How do you create a TreeSet? How do you add to it? How do you merge two TreeSets?
-    Set<String> sortedUniqueDepts = null;
+    Set<String> sortedUniqueDepts = employees.stream().collect(Collector.of(() -> new TreeSet<>(),
+        (set, emp) -> set.add(emp.getDepartment()), (set1, set2) -> {
+          set1.addAll(set2);
+          return set1;
+        }));
 
     // TODO 5.2: Custom collector that concatenates employee names with " | " separator
     // But adds department prefix: "Engineering: Alice | Engineering: Bob | Sales: Charlie"
     // Question: How do you build a custom accumulator that formats as it collects?
     // Challenge: Can you do this with Collector.of() or do you need StringBuilder accumulation?
-    String customConcatenated = null;
+    String customConcatenated =
+        employees.stream().collect(Collector.of(() -> new StringBuilder(), (sb, emp) -> {
+          if (sb.length() > 0) {
+            sb.append(" | ");
+          }
+          sb.append(emp.getDepartment()).append(": ").append(emp.getName());
+        }, (sb1, sb2) -> {
+          if (sb1.length() > 0 && sb2.length() > 0) {
+            sb1.append(" | ");
+          }
+          sb1.append(sb2);
+          return sb1;
+        }, StringBuilder::toString));
 
     // ========== TEST YOUR SOLUTIONS ==========
 
