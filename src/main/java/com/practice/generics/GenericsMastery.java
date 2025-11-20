@@ -32,8 +32,9 @@ public class GenericsMastery {
 
   // TODO 1.1: Fill in the generic type parameters
   // Find the first element in a list that matches a predicate
-  public static <T> Optional<T> findFirst(List<T> list, Predicate<T> predicate) {
-    for (T item : list) {
+  // Hint: What type does the list contain? What does Optional contain?
+  public static Optional findFirst(List list, Predicate predicate) {
+    for (Object item : list) {
       if (predicate.test(item)) {
         return Optional.of(item);
       }
@@ -43,10 +44,10 @@ public class GenericsMastery {
 
   // TODO 1.2: Fill in the generic type parameters (THREE type parameters!)
   // Create a Map from a list using key and value extractors
-  public static <T, K, V> Map<K, V> toMap(List<T> list, Function<T, K> keyExtractor,
-      Function<T, V> valueExtractor) {
-    Map<K, V> result = new HashMap<>();
-    for (T item : list) {
+  // Hint: T = input type, K = key type, V = value type
+  public static Map toMap(List list, Function keyExtractor, Function valueExtractor) {
+    Map result = new HashMap();
+    for (Object item : list) {
       result.put(keyExtractor.apply(item), valueExtractor.apply(item));
     }
     return result;
@@ -54,35 +55,39 @@ public class GenericsMastery {
 
   // TODO 1.3: Fill in generic with UPPER BOUND
   // Sum all numbers (must extend Number)
-  public static <T extends Number> double sumAll(List<T> numbers) {
+  // Hint: <T extends Number>
+  public static double sumAll(List numbers) {
     double sum = 0;
-    for (T num : numbers) {
-      sum += num.doubleValue();
+    for (Object num : numbers) {
+      // FIX: Cast to Number to call doubleValue()
+      sum += 0; // TODO: Fix this line
     }
     return sum;
   }
 
   // TODO 1.4: Generic method with MULTIPLE bounds
-  // Find max element that is both Comparable AND has a specific interface
-  // Hint: <T extends Comparable<T> & SomeInterface>
-  public static <T extends Comparable<T>> T findMax(List<T> list) {
+  // Find max element that is both Comparable
+  // Hint: <T extends Comparable<T>>
+  public static Object findMax(List list) {
     if (list.isEmpty()) {
       throw new IllegalArgumentException("List is empty");
     }
-    T max = list.get(0);
-    for (T item : list) {
-      if (item.compareTo(max) > 0) {
-        max = item;
-      }
+    Object max = list.get(0);
+    for (Object item : list) {
+      // TODO: Compare items using compareTo
+      // if (item.compareTo(max) > 0) {
+      // max = item;
+      // }
     }
     return max;
   }
 
   // TODO 1.5: Generic method that returns a List of the same type
   // Filter a list based on predicate
-  public static <T> List<T> filter(List<T> list, Predicate<T> predicate) {
-    List<T> result = new ArrayList<>();
-    for (T item : list) {
+  // Hint: Use <T> for the type parameter
+  public static List filter(List list, Predicate predicate) {
+    List result = new ArrayList();
+    for (Object item : list) {
       if (predicate.test(item)) {
         result.add(item);
       }
@@ -94,7 +99,8 @@ public class GenericsMastery {
 
   // TODO 2.1: Method that prints any list (we only READ from it)
   // Use ? wildcard
-  public static void printAll(List<?> list) {
+  // Hint: List<?> means "list of unknown type"
+  public static void printAll(List list) {
     for (Object item : list) {
       System.out.println(item);
     }
@@ -102,24 +108,29 @@ public class GenericsMastery {
 
   // TODO 2.2: Method that sums numbers from any Number subtype list
   // Use ? extends Number (we READ numbers)
-  public static double sumNumbers(List<? extends Number> numbers) {
+  // Hint: This allows List<Integer>, List<Double>, etc.
+  public static double sumNumbers(List numbers) {
     double sum = 0;
-    for (Number num : numbers) {
-      sum += num.doubleValue();
+    for (Object num : numbers) {
+      // TODO: Cast to Number and call doubleValue()
+      sum += 0; // Fix this
     }
     return sum;
   }
 
   // TODO 2.3: Find max in any Comparable list
-  // Use ? extends Comparable
-  public static <T extends Comparable<? super T>> T findMaxWildcard(List<T> list) {
-    // This is the CORRECT signature for findMax with wildcards
-    // TODO: Implement (similar to 1.4)
-    return null;
+  // Use ? extends Comparable with wildcard capture
+  // Hint: <T extends Comparable<? super T>> T findMaxWildcard(List<T> list)
+  public static Object findMaxWildcard(List list) {
+    // TODO: Implement (similar to 1.4 but with proper wildcard bounds)
+    if (list.isEmpty()) {
+      throw new IllegalArgumentException("List is empty");
+    }
+    return null; // TODO: Implement
   }
 
   // TODO 2.4: Why can't we ADD to a "List<? extends Number>"?
-  // Uncomment and try to fix:
+  // Uncomment and try to understand the error:
   /*
    * public static void addNumber(List<? extends Number> numbers) { numbers.add(10); // COMPILE
    * ERROR! Why? numbers.add(10.5); // COMPILE ERROR! Why? // Answer: We don't know the EXACT type,
@@ -131,14 +142,13 @@ public class GenericsMastery {
   // TODO 3.1: Copy numbers from source to destination
   // Source: can be any Number subtype (? extends Number) - we READ
   // Destination: must accept at least Number (? super Number) - we WRITE
-  public static void copyNumbers(List<? extends Number> source, List<? super Number> destination) {
-    for (Number num : source) {
-      destination.add(num);
-    }
+  public static void copyNumbers(List source, List destination) {
+    // TODO: Iterate through source and add to destination
   }
 
   // TODO 3.2: Add all integers to a collection that accepts Numbers or supertypes
-  public static void addIntegers(List<? super Integer> list) {
+  // Hint: Use ? super Integer
+  public static void addIntegers(List list) {
     list.add(1);
     list.add(2);
     list.add(3);
@@ -154,87 +164,73 @@ public class GenericsMastery {
   // TODO 3.4: PECS Principle Exercise
   // Fill in the wildcards for a generic copy method
   // PECS = Producer Extends, Consumer Super
-  public static <T> void copy(List<? extends T> source, List<? super T> destination) {
-    for (T item : source) {
-      destination.add(item);
-    }
+  // Hint: source is producer (extends), destination is consumer (super)
+  public static void copy(List source, List destination) {
+    // TODO: Implement the copy logic
   }
 
   // ========== PART 4: GENERIC CLASSES (15 min) ==========
 
   // TODO 4.1: Create a generic Pair class
   // Should hold two values of potentially different types
-  static class Pair<K, V> {
-    // TODO: Add fields, constructor, getters
-    private K key;
-    private V value;
+  // Hint: Use two type parameters <K, V>
+  static class Pair {
+    // TODO: Add private fields for key and value
 
-    public Pair(K key, V value) {
-      this.key = key;
-      this.value = value;
-    }
+    // TODO: Add constructor
 
-    public K getKey() {
-      return key;
-    }
-
-    public V getValue() {
-      return value;
-    }
+    // TODO: Add getters
 
     @Override
     public String toString() {
-      return "(" + key + ", " + value + ")";
+      return "(" + "key" + ", " + "value" + ")"; // TODO: Fix
     }
   }
 
   // TODO 4.2: Create a generic Box class with upper bound
   // Box can only hold Numbers or subclasses
-  static class Box<T extends Number> {
-    // TODO: Implement
-    private T value;
+  // Hint: class Box<T extends Number>
+  static class Box {
+    // TODO: Add private field for value
 
-    public Box(T value) {
-      this.value = value;
-    }
+    // TODO: Add constructor
 
-    public T getValue() {
-      return value;
-    }
+    // TODO: Add getValue() method
 
-    public double getDoubleValue() {
-      return value.doubleValue();
-    }
+    // TODO: Add getDoubleValue() method that returns value.doubleValue()
 
     // TODO 4.3: Add a method that compares this box with another box
     // Should work with any Number type
-    public boolean isGreaterThan(Box<? extends Number> other) {
-      // TODO: Compare values
+    // Hint: Use wildcard Box<? extends Number>
+    public boolean isGreaterThan(Box other) {
+      // TODO: Compare this.value.doubleValue() with other's value
       return false;
     }
   }
 
   // TODO 4.4: Create a generic Stack
-  static class Stack<T> {
-    // TODO: Implement push, pop, peek, isEmpty
-    private List<T> items = new ArrayList<>();
+  // Hint: Use List<T> internally for storage
+  static class Stack {
+    private List items = new ArrayList(); // TODO: Make this generic
 
-    public void push(T item) {
-      // TODO
+    public void push(Object item) {
+      // TODO: Implement push
     }
 
-    public T pop() {
-      // TODO
+    public Object pop() {
+      // TODO: Implement pop (remove and return last item)
+      // Check if empty first!
       return null;
     }
 
-    public T peek() {
-      // TODO
+    public Object peek() {
+      // TODO: Implement peek (return last item without removing)
+      // Check if empty first!
       return null;
     }
 
     public boolean isEmpty() {
-      // TODO
+      // TODO: Implement isEmpty
       return true;
     }
   }
@@ -243,20 +239,25 @@ public class GenericsMastery {
 
   // TODO 5.1: Generic method with multiple bounds
   // Element must be Comparable AND Cloneable
-  public static <T extends Comparable<T> & Cloneable> T findMaxCloneable(List<T> list) {
+  // Hint: <T extends Comparable<T> & Cloneable>
+  public static Object findMaxCloneable(List list) {
     // TODO: Find max and return a clone of it
     // Note: You'll need to cast to Cloneable and call clone()
+    // clone() returns Object, so cast back to T
     return null;
   }
 
   // TODO 5.2: Recursive type bound (self-referential generics)
   // This is how Comparable is actually defined!
-  public static <T extends Comparable<T>> void sort(List<T> list) {
+  // Hint: <T extends Comparable<T>>
+  public static void sort(List list) {
     // TODO: Implement bubble sort or use Collections.sort
+    // Collections.sort(list); is the easy way!
   }
 
   // TODO 5.3: Generic Builder pattern
   // Create a generic builder for any type
+  // This is already implemented as an example - study it!
   static class Builder<T> {
     private Supplier<T> constructor;
     private List<Consumer<T>> operations = new ArrayList<>();
@@ -278,20 +279,20 @@ public class GenericsMastery {
   }
 
   // TODO 5.4: Generic Cache with bounded types
-  static class Cache<K, V> {
-    private Map<K, V> map = new HashMap<>();
+  static class Cache {
+    private Map map = new HashMap(); // TODO: Make generic <K, V>
 
-    public void put(K key, V value) {
+    public void put(Object key, Object value) {
       map.put(key, value);
     }
 
-    public Optional<V> get(K key) {
+    public Optional get(Object key) {
       return Optional.ofNullable(map.get(key));
     }
 
     // TODO: Add a method that works with subtypes
-    // Should accept any key that extends K
-    public Optional<V> getWithSubtype(K key) {
+    // Should accept any key of type K
+    public Optional getWithSubtype(Object key) {
       return get(key);
     }
   }
@@ -322,36 +323,36 @@ public class GenericsMastery {
 
   // TODO 7.1: Which wildcard to use?
   // Scenario: Reading from a list of Integers to sum them
-  public static int sumIntegers(List<? extends Integer> numbers) {
+  // Hint: We're reading (producing) values, use extends
+  public static int sumIntegers(List numbers) {
     int sum = 0;
-    for (Integer n : numbers) {
-      sum += n;
+    for (Object n : numbers) {
+      // TODO: Cast to Integer
+      sum += 0; // Fix this
     }
     return sum;
   }
 
   // TODO 7.2: Which wildcard to use?
   // Scenario: Adding strings to a list
-  public static void addStrings(List<? super String> list) {
+  // Hint: We're writing (consuming), use super
+  public static void addStrings(List list) {
     list.add("Hello");
     list.add("World");
   }
 
   // TODO 7.3: Complex PECS scenario
   // Transfer elements from source to destination with transformation
-  public static <T, R> void transferAndTransform(List<? extends T> source,
-      List<? super R> destination, Function<T, R> transformer) {
-    for (T item : source) {
-      destination.add(transformer.apply(item));
-    }
+  // Hint: source produces T (extends), destination consumes R (super)
+  public static void transferAndTransform(List source, List destination, Function transformer) {
+    // TODO: Implement - read from source, transform, add to destination
   }
 
   // TODO 7.4: PECS with multiple collections
   // Merge two lists into a third
-  public static <T> void merge(List<? extends T> list1, List<? extends T> list2,
-      List<? super T> result) {
-    result.addAll(list1);
-    result.addAll(list2);
+  // Hint: Both sources produce (extends), result consumes (super)
+  public static void merge(List list1, List list2, List result) {
+    // TODO: Add all from list1 and list2 to result
   }
 
   // ========== TEST YOUR SOLUTIONS ==========

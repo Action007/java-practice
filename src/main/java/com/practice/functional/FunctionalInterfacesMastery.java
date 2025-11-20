@@ -43,6 +43,7 @@ public class FunctionalInterfacesMastery {
   }
 
   // ========== PART 1: BASIC FUNCTIONAL INTERFACES (15 min) ==========
+  // Learn the core functional interface signatures
 
   static List<Product> products =
       Arrays.asList(new Product("Laptop", 999.99, 1, true), new Product("Mouse", 25.50, 1, true),
@@ -50,48 +51,68 @@ public class FunctionalInterfacesMastery {
           new Product("Headphones", 149.99, 1, true), new Product("Desk", 299.99, 4, false));
 
   // TODO 1.1: Create a Supplier that returns a default "Unknown Product"
+  // Supplier<T>: () -> T (no input, returns T)
+  // Hint: Return a new Product with name "Unknown", price 0.0, category 0, inStock false
   static Supplier<Product> unknownProductFactory = null;
 
   // TODO 1.2: Create a Consumer that prints product name and price
+  // Consumer<T>: (T) -> void (takes T, returns nothing)
+  // Hint: System.out.println(p.getName() + ": $" + p.getPrice())
   static Consumer<Product> productPrinter = null;
 
   // TODO 1.3: Create a Predicate that returns true if product price > $50
+  // Predicate<T>: (T) -> boolean (takes T, returns true/false)
   static Predicate<Product> isExpensive = null;
 
   // TODO 1.4: Create a Function that extracts product name
+  // Function<T, R>: (T) -> R (takes T, returns R)
   static Function<Product, String> toName = null;
 
   // TODO 1.5: Create a UnaryOperator that applies 10% discount to a price
+  // UnaryOperator<T>: (T) -> T (takes T, returns same type T)
+  // Hint: 10% discount means multiply by 0.9
   static UnaryOperator<Double> applyDiscount = null;
 
   // TODO 1.6: Create a BiConsumer that prints a label and product together
+  // BiConsumer<T, U>: (T, U) -> void (takes two inputs, returns nothing)
+  // Example output: "ITEM: Laptop ($999.99)"
+  // Hint: System.out.println(label + ": " + p.getName() + " ($" + p.getPrice() + ")")
   static BiConsumer<String, Product> labeledPrinter = null;
 
   // TODO 1.7: Create a BiFunction that creates a product with category 99
+  // BiFunction<T, U, R>: (T, U) -> R (takes two inputs, returns R)
+  // Create a Product with the given name and price, category=99, inStock=true
   static BiFunction<String, Double, Product> productCreator = null;
 
   // TODO 1.8: Create an IntPredicate that checks if category is 1 (electronics)
+  // IntPredicate: (int) -> boolean (specialized for primitive int)
   static IntPredicate isElectronics = null;
 
   // ========== PART 2: FUNCTION COMPOSITION (15 min) ==========
+  // Learn to chain functions together
 
   // TODO 2.1: Create two functions and chain them with andThen
-  // Function 1: Extract product name
-  // Function 2: Convert to uppercase
+  // Function 1: Extract product name (use p.getName())
+  // Function 2: Convert string to uppercase (use s.toUpperCase())
   // Chain them: extractName.andThen(toUpperCase)
+  // andThen: first.andThen(second) means "do first, THEN do second"
   static Function<Product, String> extractName = null;
   static Function<String, String> toUpperCase = null;
   static Function<Product, String> nameToUpper = null; // Chained result
 
   // TODO 2.2: Create function chain with compose (reverse order)
-  // Function 1: Add "Product: " prefix to a string
+  // Function 1: Add "Product: " prefix to a string (use "Product: " + s)
   // Function 2: Extract product name
   // Chain: addPrefix.compose(extractName) - extracts name THEN adds prefix
+  // compose: second.compose(first) means "do first, THEN do second"
+  // Key difference: compose executes in REVERSE order of the call
   static Function<String, String> addPrefix = null;
   static Function<Product, String> extractThenPrefix = null; // Chained result
 
   // TODO 2.3: Create a multi-stage function pipeline
   // Product -> extract price -> apply discount -> format as "$XX.XX"
+  // Use andThen to chain all three functions
+  // Hint: String.format("$%.2f", value)
   static Function<Product, Double> extractPrice = null;
   static Function<Double, Double> discount10Percent = null;
   static Function<Double, String> formatCurrency = null;
@@ -99,37 +120,47 @@ public class FunctionalInterfacesMastery {
 
   // TODO 2.4: Use andThen to chain multiple transformations
   // Start with price -> apply 10% discount -> apply additional 5% discount -> round to int
+  // Chain: discount10.andThen(discount5).andThen(roundToInt)
+  // Hint for rounding: d.intValue() or (int)d.doubleValue()
   static UnaryOperator<Double> discount10 = null;
   static UnaryOperator<Double> discount5 = null;
   static Function<Double, Integer> roundToInt = null;
   static Function<Double, Integer> fullDiscountPipeline = null;
 
   // ========== PART 3: PREDICATE COMPOSITION (15 min) ==========
+  // Learn to combine boolean logic
 
   // TODO 3.1: Combine predicates with AND
   // Predicate 1: price > 50
   // Predicate 2: inStock == true
-  // Combined: expensive AND in stock
+  // Combined: expensive.and(inStock)
+  // and(): Both predicates must be true
   static Predicate<Product> expensive = null;
   static Predicate<Product> inStock = null;
   static Predicate<Product> expensiveAndInStock = null;
 
   // TODO 3.2: Combine predicates with OR
   // Either price < 10 OR category == 2
+  // or(): At least one predicate must be true
   static Predicate<Product> cheap = null;
   static Predicate<Product> categoryFood = null;
   static Predicate<Product> cheapOrFood = null;
 
   // TODO 3.3: Negate a predicate
   // Get all products that are NOT in stock
+  // negate(): Reverses the predicate result
+  // Hint: inStock.negate() or create a new predicate p -> !p.isInStock()
   static Predicate<Product> notInStock = null;
 
   // TODO 3.4: Complex predicate combination
   // (expensive AND inStock) OR (cheap AND category==1)
+  // You'll need to create a categoryElectronics predicate first
+  // Then chain: expensiveAndInStock.or(cheap.and(categoryElectronics))
   static Predicate<Product> complexFilter = null;
 
   // TODO 3.5: Create a reusable predicate builder
   // Method that returns a predicate for price range
+  // Check if product.getPrice() is >= min AND <= max
   static Predicate<Product> priceInRange(double min, double max) {
     // TODO: Return predicate that checks if product.getPrice() is between min and max
     return null;
@@ -137,100 +168,129 @@ public class FunctionalInterfacesMastery {
 
   // TODO 3.6: Chain predicate with stream filter
   // Find all products that are: expensive AND in stock, collect names
+  // Use: products.stream().filter(...).map(...).collect(Collectors.toList())
   static List<String> expensiveInStockNames = null;
 
   // ========== PART 4: METHOD REFERENCES (10 min) ==========
+  // Method references are shorthand for lambdas that just call a method.
+  // Four types:
+  // 1. Static method: ClassName::staticMethod
+  // 2. Instance method of particular object: instance::method
+  // 3. Instance method of arbitrary object: ClassName::instanceMethod
+  // 4. Constructor: ClassName::new
+  //
+  // Rule: Use method reference when lambda just passes all parameters to a method.
+  // Examples:
+  // x -> Math.sqrt(x) → Math::sqrt
+  // s -> s.length() → String::length
+  // () -> new ArrayList<>() → ArrayList::new
 
-  // TODO 4.1: Convert lambda to static method reference
-  // Lambda: p -> ProductUtils.isAffordable(p)
-  // Method reference: ???
-  static Predicate<Product> affordableLambda = p -> ProductUtils.isAffordable(p);
-  static Predicate<Product> affordableMethodRef = null; // Convert to method reference
+  // TODO 4.1: Create lambda AND method reference versions
+  // Lambda version: p -> ProductUtils.isAffordable(p)
+  // Method reference: ProductUtils::isAffordable
+  static Predicate<Product> affordableLambda = null;
+  static Predicate<Product> affordableMethodRef = null;
 
-  // TODO 4.2: Convert lambda to instance method reference
-  // Lambda: s -> s.toUpperCase()
-  // Method reference: ???
-  static Function<String, String> upperLambda = s -> s.toUpperCase();
+  // TODO 4.2: Create lambda AND method reference versions
+  // Lambda version: s -> s.toUpperCase()
+  // Method reference: String::toUpperCase
+  static Function<String, String> upperLambda = null;
   static Function<String, String> upperMethodRef = null;
 
-  // TODO 4.3: Convert lambda to constructor reference
-  // Lambda: (name, price) -> new Product(name, price, 0, true)
-  // This is tricky - you might need a wrapper or custom functional interface
-  static BiFunction<String, Double, Product> productLambda =
-      (name, price) -> new Product(name, price, 0, true);
-  // TODO: Can you use Product::new here? Hint: You might need a different approach
+  // TODO 4.3: Constructor reference challenge
+  // Problem: Product constructor needs 4 params, but BiFunction only provides 2
+  // Option 1: Create a wrapper method that fills in the missing params
+  // Option 2: Use a custom functional interface (see Part 5)
+  // Try creating: (name, price) -> new Product(name, price, 0, true)
+  static BiFunction<String, Double, Product> productLambda = null;
+  // Can you convert this to Product::new? Think about why it's tricky!
 
-  // TODO 4.4: Convert these lambdas to method references where possible
-  // a) products.stream().map(p -> p.getName()) -> ???
-  // b) products.stream().filter(p -> p.isInStock()) -> ???
-  // c) products.stream().mapToDouble(p -> p.getPrice()) -> ???
-  List<String> namesLambda = products.stream().map(p -> p.getName()).collect(Collectors.toList());
-  List<String> namesMethodRef = null; // Convert to method reference
+  // TODO 4.4: Convert stream operations to method references
+  // a) .map(p -> p.getName()) → Product::getName
+  // b) .filter(p -> p.isInStock()) → Product::isInStock
 
-  List<Product> inStockLambda =
-      products.stream().filter(p -> p.isInStock()).collect(Collectors.toList());
-  List<Product> inStockMethodRef = null; // Convert to method reference
+  // Write BOTH versions for comparison:
+  static List<String> namesLambda = null; // Use: products.stream().map(p ->
+                                          // p.getName()).collect(...)
+  static List<String> namesMethodRef = null; // Use:
+                                             // products.stream().map(Product::getName).collect(...)
+
+  static List<Product> inStockLambda = null; // Use lambda version
+  static List<Product> inStockMethodRef = null; // Use method reference version
 
   // ========== PART 5: CUSTOM FUNCTIONAL INTERFACES (10 min) ==========
 
   // TODO 5.1: Create a custom functional interface for validation
+  // Step 1: Uncomment and complete the interface definition
+  // Step 2: Create TWO validators below
+
   // @FunctionalInterface
   // interface Validator<T> {
   // boolean validate(T item);
   // }
 
-  // Then create validators:
-  // Validator<Product> priceValidator = p -> p.getPrice() > 0;
-  // Validator<Product> nameValidator = p -> p.getName() != null && !p.getName().isEmpty();
+  // TODO: Create these validators:
+  // Validator<Product> priceValidator = ???; // Check if price > 0
+  // Validator<Product> nameValidator = ???; // Check if name is not null and not empty
 
-  // TODO 5.2: Create a custom functional interface with multiple methods (one abstract)
+  // TODO 5.2: Custom interface with default method
+  // Step 1: Uncomment the interface
+  // Step 2: Create a ProductProcessor that applies 10% discount
+
   // @FunctionalInterface
   // interface ProductProcessor {
   // Product process(Product p);
+  //
   // default Product processWithLogging(Product p) {
   // System.out.println("Processing: " + p.getName());
   // return process(p);
   // }
   // }
 
-  // TODO 5.3: Create a TriFunction (3 parameters)
+  // TODO: Create a processor that discounts the price by 10%
+  // ProductProcessor discountProcessor = ???;
+
+  // TODO 5.3: Create a TriFunction interface (3 parameters)
+  // Step 1: Uncomment and complete the interface
+  // Step 2: Create a productFactory
+
   // @FunctionalInterface
   // interface TriFunction<T, U, V, R> {
   // R apply(T t, U u, V v);
   // }
 
-  // Use it to create a Product from 3 parameters
-  // TriFunction<String, Double, Integer, Product> productFactory = (name, price, category) -> new
-  // Product(name, price, category, true);
+  // TODO: Create a factory that takes (name, price, category) and creates a Product with
+  // inStock=true
+  // TriFunction<String, Double, Integer, Product> productFactory = ???;
 
   // ========== PART 6: ADVANCED PATTERNS (10 min) ==========
 
   // TODO 6.1: Function that returns a Function (Higher-order function)
-  // Create a function that takes a discount percentage and returns a discount function
-  static Function<Double, UnaryOperator<Double>> createDiscounter(double discountPercent) {
+  // Create a method that takes a discount percentage and returns a discount function
+  // Example usage:
+  // UnaryOperator<Double> discount20 = createDiscounter(20.0);
+  // discount20.apply(100.0) should return 80.0
+  // Hint: Return price -> price * (1 - discountPercent / 100)
+  static UnaryOperator<Double> createDiscounter(double discountPercent) {
     // TODO: Return a UnaryOperator that applies the discount
-    // Example: createDiscounter(10.0) returns a function that applies 10% discount
     return null;
   }
 
   // TODO 6.2: Predicate factory method
   // Create a method that returns different predicates based on criteria
+  // If filterType is "price": return p -> p.getPrice() > threshold
+  // If filterType is "stock": return p -> p.isInStock() (ignore threshold)
+  // Otherwise: return p -> true (accept all)
+  // Hint: Use switch statement or if-else
   static Predicate<Product> createFilter(String filterType, double threshold) {
     // TODO: Return different predicates based on filterType
-    // "price": p -> p.getPrice() > threshold
-    // "stock": p -> p.isInStock()
-    // default: p -> true
     return null;
   }
 
   // TODO 6.3: Compose a validation pipeline
-  // Create a list of validators and check if product passes all
-  // List<Predicate<Product>> validators = Arrays.asList(
-  // p -> p.getPrice() > 0,
-  // p -> p.getName() != null,
-  // p -> !p.getName().isEmpty()
-  // );
-  // Return true only if ALL validators pass
+  // Given a list of predicates, check if product passes ALL of them
+  // Hint: validators.stream().allMatch(validator -> validator.test(product))
+  // Return true only if product passes every validator
   static boolean validateProduct(Product product, List<Predicate<Product>> validators) {
     // TODO: Use stream and allMatch
     return false;
@@ -238,6 +298,11 @@ public class FunctionalInterfacesMastery {
 
   // TODO 6.4: Create a function cache (memoization)
   // Wrap a function so it remembers previous results
+  // Algorithm:
+  // 1. Check if input exists in cache map
+  // 2. If yes, return cached result
+  // 3. If no, compute result using function.apply(input), store in cache, then return
+  // Hint: Use cache.computeIfAbsent(input, function)
   static <T, R> Function<T, R> memoize(Function<T, R> function) {
     Map<T, R> cache = new HashMap<>();
     return input -> {
@@ -303,9 +368,12 @@ public class FunctionalInterfacesMastery {
     System.out.println("\n=== PART 4: METHOD REFERENCES ===");
     // Uncomment after implementing
     /*
+     * System.out.println("4.1 Affordable (lambda): " +
+     * products.stream().filter(affordableLambda).collect(Collectors.toList()));
      * System.out.println("4.1 Affordable (method ref): " +
      * products.stream().filter(affordableMethodRef).collect(Collectors.toList()));
      * System.out.println("4.2 Upper method ref: " + upperMethodRef.apply("hello"));
+     * System.out.println("4.4a Names (lambda): " + namesLambda);
      * System.out.println("4.4a Names (method ref): " + namesMethodRef);
      * System.out.println("4.4b In stock (method ref): " + inStockMethodRef);
      */
@@ -323,6 +391,12 @@ public class FunctionalInterfacesMastery {
      * List<Predicate<Product>> validators = Arrays.asList( p -> p.getPrice() > 0, p -> p.getName()
      * != null, p -> !p.getName().isEmpty() ); System.out.println("6.3 Validate laptop: " +
      * validateProduct(products.get(0), validators));
+     * 
+     * // Test memoization Function<Integer, Integer> expensive = x -> {
+     * System.out.println("Computing " + x); return x * x; }; Function<Integer, Integer> cached =
+     * memoize(expensive); System.out.println("6.4 First call: " + cached.apply(5)); // Should print
+     * "Computing 5" System.out.println("6.4 Second call: " + cached.apply(5)); // Should NOT print
+     * "Computing 5"
      */
   }
 }
